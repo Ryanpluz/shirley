@@ -1,0 +1,243 @@
+<?php
+    include_once('config.php');
+    if(isset($_POST['submit'])){
+        $nome = $_POST['nome'];
+        $telefone = $_POST['telefone'];
+        $hora = $_POST['hora'];
+        $data = $_POST['data'];
+        $servico = $_POST['servico'];
+
+        $result = mysqli_query($conexao, "INSERT_INTO clientes(nome,telefone,horario,data,servico) 
+        VALUES ('$nome', '$telefone','$hora', '$data','$servico')");
+    }
+?>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento - Salão Beauty</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f3f3;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        header h1 {
+            color: #d17b88;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+        
+        .btn-agendar {
+            background-color: #d17b88;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-agendar:hover {
+            background-color: #c06c7a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #d17b88;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .submit-btn {
+            background-color: #d17b88;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #c06c7a;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Studio Shirley Folha</h1>
+            <p>Agende seu horário e realce sua beleza</p>
+        </header>
+        
+        <div class="main-content">
+            <button class="btn-agendar" id="btnAgendar">AGENDAR HORÁRIO</button>
+        </div>
+    </div>
+    
+    <!-- Modal de Agendamento -->
+    <div class="modal" id="modalAgendamento">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Agendar Horário</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="config.php" method="post">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="servico">Serviço</label>
+                    <select id="servico" required>
+                        <option value="">Selecione um serviço</option>
+                        <option value="corte">Corte de Cabelo</option>
+                        <option value="coloração">Coloração</option>
+                        <option value="manicure">Manicure</option>
+                        <option value="pedicure">Pedicure</option>
+                        <option value="maquiagem">Maquiagem</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="data">Data</label>
+                    <input type="date" id="data" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hora">Horário</label>
+                    <input type="time" id="hora" required>
+                </div>
+                
+            <button type="submit" is="submit" class="submit-btn">CONFIRMAR AGENDAMENTO</button>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Studio Shirley Folha &copy; 2023</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
